@@ -29,7 +29,7 @@ public class AccountController {
         return accountService.findAll();
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public Account update(@PathVariable Long id, @RequestBody Account account){
         return this.accountService.update(id, account);
     }
