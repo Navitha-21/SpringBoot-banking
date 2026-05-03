@@ -29,7 +29,7 @@ public class AccountController {
         return accountService.findAll();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("{id}")
     public Account update(@PathVariable Long id, @RequestBody Account account){
         return this.accountService.update(id, account);
     }
@@ -42,22 +42,22 @@ public class AccountController {
 
 
     @PostMapping("/deposit/{id}")
-    public String deposit(@RequestBody final Map<String, Object> request, @PathVariable Long id){
-        double amount = (Double)request.get("amount");
+    public void deposit(@RequestBody final Map<String, Object> request, @PathVariable Long id){
+        double amount = ((Number) request.get("amount")).doubleValue();
         accountService.deposit(id, amount);
-        return "deposit succesfully";
     }
 
     @PostMapping("/withdraw/{id}")
-    public String withdraw(@RequestBody final Map<String, Object> request, @PathVariable Long id){
-        double amount = (Double)request.get("amount");
+    public void withdraw(@RequestBody final Map<String, Object> request, @PathVariable Long id){
+        double amount = ((Number) request.get("amount")).doubleValue();
         accountService.withdraw(id,amount);
-        return "Transfer Successfully";
     }
-    @PostMapping("/transfer/{fromAcc}/{toAcc} ")
-    public String transfer(@RequestBody final Map<String, Object> request,@PathVariable Long fromAcc, @PathVariable Long toAcc){
-        double amount=Double.parseDouble(request.get("amount").toString());
+    @PostMapping("/transfer/{fromAcc}/{toAcc}")
+    public void transfer(@RequestBody final Map<String, Object> request,@PathVariable Long fromAcc, @PathVariable Long toAcc){
+        double amount = ((Number) request.get("amount")).doubleValue();
         accountService.transfer(fromAcc, toAcc, amount);
-        return "Transfer sucessfully";
     }
+
+
+
 }

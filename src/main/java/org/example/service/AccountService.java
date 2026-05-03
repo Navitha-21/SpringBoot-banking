@@ -1,5 +1,6 @@
 package org.example.service;
 
+import jakarta.transaction.Transactional;
 import org.example.model.Account;
 import org.example.model.Transactions;
 import org.example.repository.AccountRepository;
@@ -15,9 +16,9 @@ public class AccountService {
 
     private final TransactionsRepository transactionsRepository;
 
-    AccountService(AccountRepository accountRepository , TransactionsRepository transactionsRepository){
-        this.transactionsRepository=transactionsRepository;
+    AccountService(AccountRepository accountRepository, TransactionsRepository transactionsRepository){
         this.accountRepository=accountRepository;
+        this.transactionsRepository=transactionsRepository;
     }
 
     public Account save(Account account){
@@ -29,7 +30,7 @@ public class AccountService {
     }
 
     public Account findById(Long id){
-        return this.findById(id);
+        return accountRepository.findById(id).orElse(null);
     }
 
     public void delete(Long id) {
@@ -50,7 +51,7 @@ public class AccountService {
         return null;
     }
 
-
+    @Transactional
     public void deposit(Long acc_id, double amount) {
         Account acc=accountRepository.findById(acc_id).get();
         if (acc == null) {
@@ -58,10 +59,11 @@ public class AccountService {
         }
         acc.setBalance(acc.getBalance() + amount);
         accountRepository.save(acc);
-        saveTransactions(acc_id,null,"Withdraw",amount);
+        saveTransactions(acc_id,null,"Deposit",amount);
 
     }
 
+    @Transactional
     public void withdraw(Long acc_id, double amount) {
         Account acc=accountRepository.findById(acc_id).get();
         if (acc.getBalance() < amount) {
@@ -70,8 +72,9 @@ public class AccountService {
         acc.setBalance(acc.getBalance() - amount );
         accountRepository.save(acc);
         saveTransactions(acc_id,null,"Withdraw",amount);
-        }
+    }
 
+    @Transactional
     public void transfer(Long fromAcc, Long toAcc, double amount) {
         Account from = accountRepository.findById(fromAcc).get();
         Account to = accountRepository.findById(toAcc).get();
@@ -93,5 +96,23 @@ public class AccountService {
         tnx.setAmount(amount);
         transactionsRepository.save(tnx);
     }
+
+//    @Transactional
+//    public Account updateTransaction(Long acc_id, Account account){
+//        Account newAcc=this.accountRepository.findById(acc_id).orElse(null);
+//        if(newAcc!=null){
+//            newAcc.setAcc_num(account.getAcc_num());
+//            newAcc.setName(account.getName());
+//            newAcc.setCity(account.getCity());
+//            newAcc.setPhone(account.getPhone());
+//            newAcc.setEmail(account.getEmail());
+//            newAcc.setBalance(account.getBalance());
+//            Account acc=this.accountRepository.save(newAcc);
+//            if(acc!=null){
+//                System.out.println("Error Updating Account");
+//            }
+//        }
+//        return null;
+//    }
 }
 

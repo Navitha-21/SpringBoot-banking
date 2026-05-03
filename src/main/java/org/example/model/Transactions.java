@@ -18,6 +18,7 @@ public class Transactions {
 
     @Column(name="toacc_id")
     private Long  toacc;
+
     @Column(name="amount")
     private double amount;
 
